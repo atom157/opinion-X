@@ -15,22 +15,10 @@ export type MarketSummary = {
 };
 
 type MarketsResponse = {
-  items?: MarketSummary[];
-  list?: Array<{
-    marketId: string;
-    marketTitle?: string;
-    statusEnum?: string | null;
-    chainId?: number | null;
-    quoteToken?: string | null;
-    volume24h?: number | null;
-    volume7d?: number | null;
-    totalVolume?: number | null;
-    childMarkets?: unknown[];
-  }>;
-  total?: number;
-  page?: number;
-  pageSize?: number;
-  hasMore?: boolean;
+  items: MarketSummary[];
+  page: number;
+  pageSize: number;
+  hasMore: boolean;
 };
 
 const formatNumber = (value: number | null) => {
@@ -103,26 +91,8 @@ export default function MarketExplorer() {
     setPage(1);
   };
 
-  const normalizedItems: MarketSummary[] = useMemo(() => {
-    if (data?.items) return data.items;
-    if (data?.list) {
-      return data.list.map((market) => ({
-        marketId: market.marketId,
-        title: market.marketTitle ?? 'Untitled market',
-        status: market.statusEnum ?? null,
-        chainId: market.chainId ?? null,
-        quoteToken: market.quoteToken ?? null,
-        volume24h: market.volume24h ?? null,
-        volume7d: market.volume7d ?? null,
-        totalVolume: market.totalVolume ?? null,
-        childCount: Array.isArray(market.childMarkets) ? market.childMarkets.length : 0
-      }));
-    }
-    return [];
-  }, [data]);
-
   const canGoBack = page > 1;
-  const canGoNext = data?.hasMore ?? normalizedItems.length === pageSize;
+  const canGoNext = data?.hasMore ?? false;
 
   return (
     <div className="panel" style={{ padding: 0 }}>
@@ -223,10 +193,10 @@ export default function MarketExplorer() {
       <div className="panel" style={{ border: 'none', paddingTop: 0 }}>
         {loading && <p className="notice">Loading markets...</p>}
         {error && <p className="notice">{error}</p>}
-        {!loading && !error && normalizedItems.length === 0 && (
+        {!loading && !error && data?.items.length === 0 && (
           <p className="notice">No markets match your filters.</p>
         )}
-        {!loading && normalizedItems.length ? (
+        {!loading && data?.items.length ? (
           <table className="table">
             <thead>
               <tr>
@@ -241,7 +211,7 @@ export default function MarketExplorer() {
               </tr>
             </thead>
             <tbody>
-              {normalizedItems.map((market) => (
+              {data.items.map((market) => (
                 <tr key={market.marketId}>
                   <td>
                     <a href={`/market/${market.marketId}`}>{market.title}</a>

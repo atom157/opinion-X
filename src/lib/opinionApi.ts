@@ -51,10 +51,6 @@ export async function opinionFetch<T>(path: string, options: FetchOptions = {}):
 
       if (!response.ok) {
         const text = await response.text();
-        console.error("[opinionFetch] non-200 response", {
-          status: response.status,
-          url: url.toString()
-        });
         if (!retrying && shouldRetry(response.status)) {
           await sleep(RETRY_BACKOFF_MS);
           return attempt(true);
@@ -63,13 +59,6 @@ export async function opinionFetch<T>(path: string, options: FetchOptions = {}):
       }
 
       return (await response.json()) as T;
-    } catch (error) {
-      if (!retrying && error instanceof Error && error.name === "AbortError") {
-        console.error("[opinionFetch] timeout", { url: url.toString() });
-      } else if (!retrying && !(error instanceof Error)) {
-        console.error("[opinionFetch] unknown error", { url: url.toString() });
-      }
-      throw error;
     } finally {
       clearTimeout(timeout);
     }
