@@ -10,18 +10,6 @@ Market discovery dashboard for Opinion markets. Built with Next.js App Router an
 - API proxy routes so the client never needs an API key.
 - Health check endpoint at `/health`.
 
-## Product Decision (Why this MVP)
-Opinion Builders projects fall into three recurring buckets: dashboards, market explorers, and trader panels/alerts. A market explorer is the fastest to ship and the most universally useful because it helps traders quickly filter, rank, and open markets without signing in or taking trading actions. This MVP focuses on search + filters + child market visibility, delivering the highest utility per development hour while staying lightweight for Railway deploys.
-
-## Project Structure
-```
-src/
-  app/                # Next.js App Router pages + API routes
-  components/         # Client UI components
-  lib/                # API client, normalization, caching utilities
-scripts/              # Local validation + API probe helpers
-```
-
 ## Requirements
 - Node.js 18+
 - Opinion API key
@@ -67,21 +55,7 @@ After running the dev server:
 npm run check:endpoints
 ```
 
-## Opinion API Probe
-Use this helper to inspect the raw API payload shape when you have network access:
-```bash
-node scripts/probe-opinion.mjs
-```
-
 ## Notes
 - The server uses pagination scanning with early stop and TTL caching to avoid loading all markets into memory.
 - If the Opinion API uses a different market list path, update `src/app/api/markets/route.ts` accordingly.
 - Reference UI check: the build environment could not reach `https://webfeng.org/opview/`, so the MVP mirrors the table-driven layout shown in the provided screenshot (search, filters, status badges, and a market list table).
-
-## Deployment Checklist
-- [ ] `npm install` completed successfully
-- [ ] `npm run build` passes
-- [ ] `npm start` serves the app
-- [ ] `/health` returns `{ ok: true }`
-- [ ] `/api/markets` and `/api/market/:marketId` return JSON
-- [ ] `npm audit` shows no high/critical vulnerabilities

@@ -40,9 +40,8 @@ const matchesFilter = (
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
-  const page = Math.max(1, Number(searchParams.get('page') ?? '1'));
-  const requestedPageSize = Number(searchParams.get('pageSize') ?? '20');
-  const pageSize = Math.min(Math.max(requestedPageSize, 1), 50);
+  const page = Number(searchParams.get('page') ?? '1');
+  const pageSize = Number(searchParams.get('pageSize') ?? '20');
   const q = searchParams.get('q') ?? undefined;
   const status = searchParams.get('status') ?? undefined;
   const chainId = searchParams.get('chainId') ?? undefined;
